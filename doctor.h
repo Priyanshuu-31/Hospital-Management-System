@@ -9,6 +9,7 @@ struct Doctor {
     char specialty[100];
     char availability[100];
     struct Doctor* next;
+    float consultationFee;
 };
 
 extern struct Doctor* hashTable[TABLE_SIZE];

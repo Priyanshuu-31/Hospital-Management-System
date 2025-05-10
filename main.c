@@ -1,9 +1,9 @@
-// ✅ FIXED & UPDATED: main.c using gotoxy UI
 #include <stdio.h>
 #include "doctor.h"
 #include "medicalrecord.h"
 #include "appointments.h"
 #include "consoleui.h"
+#include "billing.h"
 
 int main() {
     int mainChoice;
@@ -33,7 +33,7 @@ int main() {
                 appointmentModule();
                 break;
             case 4:
-                gotoxy(10, 5); printf("Billing & Payment Module not implemented yet.\n");
+                billingModule();
                 break;
             case 5:
                 root = medicalRecordModule(root);

@@ -13,29 +13,35 @@ int hashFunction(int id) {
 
 void addDoctor() {
     struct Doctor* newDoctor = (struct Doctor*)malloc(sizeof(struct Doctor));
+
     gotoxy(10, 2); printf("Enter Doctor ID: ");
     scanf("%d", &newDoctor->id);
-    getchar();
+    getchar();  // Flush newline character
 
     gotoxy(10, 3); printf("Enter Doctor Name: ");
     fgets(newDoctor->name, sizeof(newDoctor->name), stdin);
-    newDoctor->name[strcspn(newDoctor->name, "\n")] = 0;
+    newDoctor->name[strcspn(newDoctor->name, "\n")] = '\0';
 
     gotoxy(10, 4); printf("Enter Specialty: ");
     fgets(newDoctor->specialty, sizeof(newDoctor->specialty), stdin);
-    newDoctor->specialty[strcspn(newDoctor->specialty, "\n")] = 0;
+    newDoctor->specialty[strcspn(newDoctor->specialty, "\n")] = '\0';
 
     gotoxy(10, 5); printf("Enter Availability: ");
     fgets(newDoctor->availability, sizeof(newDoctor->availability), stdin);
-    newDoctor->availability[strcspn(newDoctor->availability, "\n")] = 0;
+    newDoctor->availability[strcspn(newDoctor->availability, "\n")] = '\0';
 
-    newDoctor->next = NULL;
+    gotoxy(10, 6); printf("Enter Consultation Fee: ");
+    char feeInput[20];
+    fgets(feeInput, sizeof(feeInput), stdin);
+    newDoctor->consultationFee = atof(feeInput);  // convert string to float
+
     int index = hashFunction(newDoctor->id);
     newDoctor->next = hashTable[index];
     hashTable[index] = newDoctor;
 
-    gotoxy(10, 7); printf("Doctor added successfully.\n");
+    gotoxy(10, 8); printf("Doctor added successfully.\n");
 }
+
 
 void listDoctors() {
     gotoxy(5, 2); printf("=== List of Doctors ===\n");
