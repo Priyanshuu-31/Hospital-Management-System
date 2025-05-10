@@ -4,7 +4,8 @@
 #include <string.h>
 #include "consoleui.h"
 #include "appointments.h"
-#include "doctor.h"  // Ensure this has extern hashTable declaration
+#include "doctor.h"
+#include "patient.h"  // Ensure this has extern hashTable declaration
 
 void initQueue(Queue *q) {
     q->front = q->rear = -1;
@@ -47,6 +48,11 @@ void bookAppointment(Queue *q) {
     printf("Enter Patient Name: ");
     fgets(a.patientName, sizeof(a.patientName), stdin);
     a.patientName[strcspn(a.patientName, "\n")] = '\0';
+
+    if (!isPatientRegistered(a.patientName)) {
+        printf("Patient not found. Please register the patient first.\n");
+        return;
+    }
 
     printf("Enter Doctor Name: ");
     fgets(a.doctorName, sizeof(a.doctorName), stdin);

@@ -2,215 +2,130 @@
 #include <stdlib.h>
 #include <string.h>
 #include "patient.h"
+#include "consoleui.h"
 
-// Function to add a node to the end of the list
-node *create_ll_at_end(node *start){
-    node *new_node, *ptr;
-    char name_val[MAX];
-    char bg[4];
-    int age_temp;
-    char cntct[11];
-    char gen[10];
+struct Patient* patientTable[TABLE_SIZE] = {NULL};
 
-    // Allocating Memory
-    new_node = (node *)malloc(sizeof(node));
-    if (new_node == NULL){
-        printf("Memory Allocation Failed\n");
-        return start;
+int patientHash(int id) {
+    return id % TABLE_SIZE;
+}
+
+int isPatientRegistered(const char *name) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        struct Patient* temp = patientTable[i];
+        while (temp != NULL) {
+            if (strcmp(temp->name, name) == 0) {
+                return 1;  // Patient found
+            }
+            temp = temp->next;
+        }
     }
+    return 0;  // Not found
+}
 
-    getchar(); // Clear input buffer
+void addPatient() {
+    struct Patient* newPatient = (struct Patient*)malloc(sizeof(struct Patient));
 
-    // Getting Patient Details
-    printf("Enter the Patient's Name:");
-    fgets(name_val, MAX, stdin);
-    name_val[strcspn(name_val, "\n")] = 0;
-    strcpy(new_node->name, name_val);
-
-    printf("Age:");
-    scanf("%d", &age_temp);
-    new_node->age = age_temp;
-
+    gotoxy(10, 2); printf("Enter Patient ID: ");
+    scanf("%d", &newPatient->id);
     getchar();
 
-    printf("Blood Group:");
-    fgets(bg, 4, stdin);
-    bg[strcspn(bg, "\n")] = 0;
-    strcpy(new_node->blood_grp, bg);
+    gotoxy(10, 3); printf("Enter Name: ");
+    fgets(newPatient->name, sizeof(newPatient->name), stdin);
+    newPatient->name[strcspn(newPatient->name, "\n")] = '\0';
 
-    printf("Gender(Male/Female/Non-Binary):");
-    fgets(gen, 10, stdin);
-    gen[strcspn(gen, "\n")] = 0;
-    strcpy(new_node->gender, gen);
+    gotoxy(10, 4); printf("Enter Age: ");
+    scanf("%d", &newPatient->age);
+    getchar();
 
-    printf("Contact Number:");
-    fgets(cntct, 11, stdin);
-    cntct[strcspn(cntct, "\n")] = 0;
-    strcpy(new_node->contact_no, cntct);
-    
-    strcpy(new_node->status, "Undergoing Treatment");
+    gotoxy(10, 5); printf("Enter Gender: ");
+    fgets(newPatient->gender, sizeof(newPatient->gender), stdin);
+    newPatient->gender[strcspn(newPatient->gender, "\n")] = '\0';
 
-    // If first Node
-    if (start == NULL){
-        new_node->next = NULL;
-        new_node->ID = 1;
-        start = new_node;
-        return start;
-    }
+    gotoxy(10, 6); printf("Enter Contact Number: ");
+    fgets(newPatient->contact, sizeof(newPatient->contact), stdin);
+    newPatient->contact[strcspn(newPatient->contact, "\n")] = '\0';
 
-    // If not the first node
-    ptr = start;
-    int i = 1;
-    while (ptr->next != NULL){
-        ptr = ptr->next;
-        i++;
-    }
-    ptr->next = new_node;
-    new_node->next = NULL;
-    new_node->ID = i + 1;
-    return start;
+    int index = patientHash(newPatient->id);
+    newPatient->next = patientTable[index];
+    patientTable[index] = newPatient;
+
+    gotoxy(10, 8); printf("Patient added successfully.\n");
 }
 
-// Function to delete a node based on ID
-node *delete_node(node *start){
-    node *ptr, *prev = NULL;
-    int val;
-    printf("Enter the ID for Deletion:");
-    scanf("%d", &val);
-
-    ptr = start;
-    while (ptr != NULL && ptr->ID != val){
-        prev = ptr;
-        ptr = ptr->next;
+void listPatients() {
+    gotoxy(5, 2); printf("=== List of Patients ===\n");
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        struct Patient* temp = patientTable[i];
+        while (temp != NULL) {
+            printf("ID: %d | Name: %s | Age: %d | Gender: %s | Contact: %s\n",
+                   temp->id, temp->name, temp->age, temp->gender, temp->contact);
+            temp = temp->next;
+        }
     }
-
-    if (ptr == NULL){
-        printf("ID not Found\n");
-        return start;
-    }
-
-    // if it's the first node
-    if (ptr == start){
-        start = start->next;
-        free(ptr);
-        printf("Record Deleted\n");
-        return start;
-    }
-
-    // if not the first node
-    prev->next = ptr->next;
-    free(ptr);
-    printf("Record Deleted\n");
-    return start;
 }
 
-// Function to update a patient's details
-node *update_node(node *start){
-    node *ptr;
-    int ID_val, option;
-    char new_status[25], new_name[MAX];
-
-    // Asking for the ID to Search
-    while (1){
-        printf("\nEnter the ID of the Record (Enter -1 to Exit):");
-        scanf("%d", &ID_val);
-
-        if (ID_val == -1){
-            printf("Exiting...\n");
-            break;
+void searchPatientByID() {
+    int id;
+    gotoxy(10, 2); printf("Enter Patient ID to search: ");
+    scanf("%d", &id);
+    int index = patientHash(id);
+    struct Patient* temp = patientTable[index];
+    while (temp != NULL) {
+        if (temp->id == id) {
+            gotoxy(10, 4); printf("Patient found: %s | Age: %d | Gender: %s | Contact: %s\n",
+                   temp->name, temp->age, temp->gender, temp->contact);
+            return;
         }
-
-        ptr = start;
-        while (ptr != NULL && ptr->ID != ID_val){
-            ptr = ptr->next;
-        }
-
-        if (ptr == NULL){
-            printf("Record not Found\n");
-            continue;
-        }
-
-        // Required Updation Menu
-        while (1){
-            printf("\nWhat to Update?:\n 1.Name \n 2.Status \n 3.Contact Number \n 4.Exit\n");
-            scanf("%d", &option);
-            getchar();
-
-            if (option == 1){ // Updating Name
-                printf("\nEnter the New Name:");
-                fgets(new_name, MAX, stdin);
-                new_name[strcspn(new_name, "\n")] = 0;
-                strcpy(ptr->name, new_name);
-                printf("Name Updated\n");
-            }
-        
-            else if (option == 2){ // Updating Status
-                int status_op;
-                printf("\nEnter the status:\n 1.Undergoing Treatment \n 2.Discharged \n 3.Exit\n ");
-                scanf("%d", &status_op);
-                getchar();
-
-                while (1){
-                    if (status_op == 1){
-                        strcpy(ptr->status, "Undergoing Treatment");
-                        printf("Set to 'Undergoing Treatment'\n");
-                        break;
-                    }
-                    else if (status_op == 2){
-                        strcpy(ptr->status, "Discharged");
-                        printf("Set to 'Discharged'\n");
-                        break;
-                    }
-                    else if (status_op == 3){
-                        printf("Exiting...\n");
-                        break;
-                    }
-                    else{
-                        printf("Enter a valid option!\n");
-                    }
-                }
-            }
-            
-            else if (option == 3){
-                char new_cntct[11];
-                printf("Enter the New Contact Number:");
-                fgets(new_cntct, 11, stdin);
-                new_cntct[strcspn(new_cntct, "\n")] = 0;
-                strcpy(ptr->contact_no, new_cntct);
-                printf("Contact Number Updated..\n");
-            }
-            
-            else if (option == 4){
-                printf("Exiting...\n");
-                break;
-            }
-
-            else{
-                printf("Invalid Option\n");
-            }
-        }
+        temp = temp->next;
     }
-    return start;
+    gotoxy(10, 4); printf("Patient not found.\n");
 }
 
-// Function to search for a node by ID
-node *search_node(node *start){
-    node *ptr;
-    int search_ID;
-    printf("Enter the ID to be Searched:");
-    scanf("%d", &search_ID);
-
-    ptr = start;
-    while (ptr != NULL && ptr->ID != search_ID){
-        ptr = ptr->next;
+void deletePatientByID() {
+    int id;
+    gotoxy(10, 2); printf("Enter Patient ID to delete: ");
+    scanf("%d", &id);
+    int index = patientHash(id);
+    struct Patient *temp = patientTable[index], *prev = NULL;
+    while (temp != NULL && temp->id != id) {
+        prev = temp;
+        temp = temp->next;
     }
-
-    if (ptr == NULL){
-        printf("Record Not Found\n");
-        return start;
+    if (temp == NULL) {
+        gotoxy(10, 4); printf("Patient not found.\n");
+        return;
     }
+    if (prev == NULL)
+        patientTable[index] = temp->next;
+    else
+        prev->next = temp->next;
+    free(temp);
+    gotoxy(10, 4); printf("Patient deleted successfully.\n");
+}
 
-    printf("\nID\t Name\t Age\t BloodGroup\t Gender\t ContactNo.\t Status\n");
-    printf("%d \t %s \t %d\t %s \t %s \t %s \t %s\n", ptr->ID, ptr->name, ptr->age, ptr->blood_grp, ptr->gender, ptr->contact_no, ptr->status);
-    return start;
+void patientModule() {
+    int choice;
+    do {
+        clearScreen();
+        gotoxy(30, 2); printf("=== Patient Management Module ===");
+        gotoxy(30, 5); printf("1. Add Patient");
+        gotoxy(30, 6); printf("2. List Patients");
+        gotoxy(30, 7); printf("3. Search Patient by ID");
+        gotoxy(30, 8); printf("4. Delete Patient by ID");
+        gotoxy(30, 9); printf("0. Back to Main Menu");
+        gotoxy(30, 11); printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        clearScreen();
+        switch (choice) {
+            case 1: addPatient(); break;
+            case 2: listPatients(); break;
+            case 3: searchPatientByID(); break;
+            case 4: deletePatientByID(); break;
+            case 0: gotoxy(10, 5); printf("Returning to Main Menu...\n"); break;
+            default: gotoxy(10, 5); printf("Invalid choice. Try again.\n");
+        }
+        pauseScreen();
+    } while (choice != 0);
 }
