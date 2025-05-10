@@ -1,4 +1,3 @@
-// doctor.h
 #ifndef DOCTOR_H
 #define DOCTOR_H
 
@@ -6,18 +5,18 @@
 
 struct Doctor {
     int id;
-    char name[50];
-    char specialty[50];
-    char availability[50];
+    char name[100];
+    char specialty[100];
+    char availability[100];
     struct Doctor* next;
 };
 
-// Function declarations
+extern struct Doctor* hashTable[TABLE_SIZE];
+
 void addDoctor();
 void listDoctors();
 void searchDoctorByID();
 void deleteDoctorByID();
-
-extern struct Doctor* hashTable[TABLE_SIZE];
+void doctorModule();  // ✅ This must be here
 
 #endif

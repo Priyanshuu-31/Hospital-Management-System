@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "consoleui.h"
 #include "appointments.h"
 #include "doctor.h"  // Ensure this has extern hashTable declaration
 
@@ -93,27 +94,30 @@ void listAppointments(Queue *q) {
     }
     printf("-------------------------------------------------------------\n");
 }
-
 void appointmentModule() {
     Queue q;
     initQueue(&q);
     int choice;
 
     do {
-        printf("\n--- Appointment Scheduling Module ---\n");
-        printf("1. Book Appointment\n");
-        printf("2. Cancel Appointment\n");
-        printf("3. List Appointments\n");
-        printf("0. Back to Main Menu\n");
-        printf("Enter your choice: ");
+        clearScreen();
+        gotoxy(30, 2); printf("=== Appointment Scheduling Module ===");
+        gotoxy(30, 5); printf("1. Book Appointment");
+        gotoxy(30, 6); printf("2. Cancel Appointment");
+        gotoxy(30, 7); printf("3. List Appointments");
+        gotoxy(30, 8); printf("0. Back to Main Menu");
+        gotoxy(30, 10); printf("Enter your choice: ");
         scanf("%d", &choice);
 
+        clearScreen();
         switch (choice) {
             case 1: bookAppointment(&q); break;
             case 2: cancelAppointment(&q); break;
             case 3: listAppointments(&q); break;
-            case 0: printf("Returning to Main Menu...\n"); break;
-            default: printf("Invalid choice. Try again.\n");
+            case 0: gotoxy(30, 12); printf("Returning to Main Menu...\n"); break;
+            default: gotoxy(30, 12); printf("Invalid choice. Try again.\n");
         }
+        pauseScreen();
     } while (choice != 0);
 }
+

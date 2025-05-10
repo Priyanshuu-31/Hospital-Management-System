@@ -1,71 +1,51 @@
-// main.c
+// ✅ FIXED & UPDATED: main.c using gotoxy UI
 #include <stdio.h>
 #include "doctor.h"
 #include "medicalrecord.h"
 #include "appointments.h"
-
-void doctorModule() {
-    int choice;
-    do {
-        printf("\n--- Doctor Management Module ---\n");
-        printf("1. Add Doctor\n");
-        printf("2. List Doctors\n");
-        printf("3. Search Doctor by ID\n");
-        printf("4. Delete Doctor by ID\n");
-        printf("0. Back to Main Menu\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1: addDoctor(); break;
-            case 2: listDoctors(); break;
-            case 3: searchDoctorByID(); break;
-            case 4: deleteDoctorByID(); break;
-            case 0: printf("Returning to Main Menu...\n"); break;
-            default: printf("Invalid choice. Try again.\n");
-        }
-    } while (choice != 0);
-}
+#include "consoleui.h"
 
 int main() {
-        int mainChoice;
-        MedicalRecord* root = NULL;
-    
-        do {
-            printf("\n===== Hospital Management System =====\n");
-            printf("1. Patient Management Module\n");
-            printf("2. Doctor Management Module\n");
-            printf("3. Appointment Module\n");
-            printf("4. Billing & Payment Module\n");
-            printf("5. Medical Records & Report Module\n");
-            printf("0. Exit\n");
-            printf("Enter your choice: ");
-            scanf("%d", &mainChoice);
-    
-            switch (mainChoice) {
-                case 1:
-                    printf("Patient Management Module not implemented yet.\n");
-                    break;
-                case 2:
-                    doctorModule();
-                    break;
-                case 3:
-                    appointmentModule();  // ✅ New appointment integration
-                    break;
-                case 4:
-                    printf("Billing & Payment Module not implemented yet.\n");
-                    break;
-                case 5:
-                    root = medicalRecordModule(root);
-                    break;
-                case 0:
-                    printf("Exiting Hospital Management System.\n");
-                    break;
-                default:
-                    printf("Invalid choice. Try again.\n");
-            }
-        } while (mainChoice != 0);
-    
-        return 0;
-    }
-    
+    int mainChoice;
+    MedicalRecord* root = NULL;
+
+    do {
+        clearScreen();
+        gotoxy(25, 2); printf("===== Hospital Management System =====");
+        gotoxy(25, 5); printf("1. Patient Management Module");
+        gotoxy(25, 6); printf("2. Doctor Management Module");
+        gotoxy(25, 7); printf("3. Appointment Module");
+        gotoxy(25, 8); printf("4. Billing & Payment Module");
+        gotoxy(25, 9); printf("5. Medical Records & Report Module");
+        gotoxy(25, 10); printf("0. Exit");
+        gotoxy(25, 12); printf("Enter your choice: ");
+        scanf("%d", &mainChoice);
+
+        clearScreen();
+        switch (mainChoice) {
+            case 1:
+                gotoxy(10, 5); printf("Patient Management Module not implemented yet.\n");
+                break;
+            case 2:
+                doctorModule();
+                break;
+            case 3:
+                appointmentModule();
+                break;
+            case 4:
+                gotoxy(10, 5); printf("Billing & Payment Module not implemented yet.\n");
+                break;
+            case 5:
+                root = medicalRecordModule(root);
+                break;
+            case 0:
+                gotoxy(10, 5); printf("Exiting Hospital Management System.\n");
+                break;
+            default:
+                gotoxy(10, 5); printf("Invalid choice. Try again.\n");
+        }
+        pauseScreen();
+    } while (mainChoice != 0);
+
+    return 0;
+}
