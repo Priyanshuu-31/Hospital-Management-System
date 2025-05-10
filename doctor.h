@@ -18,4 +18,6 @@ void listDoctors();
 void searchDoctorByID();
 void deleteDoctorByID();
 
+extern struct Doctor* hashTable[TABLE_SIZE];
+
 #endif

@@ -1,8 +1,9 @@
-// appointments.c
+// ✅ FIXED & UPDATED: appointments.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "appointments.h"
+#include "doctor.h"  // Ensure this has extern hashTable declaration
 
 void initQueue(Queue *q) {
     q->front = q->rear = -1;
@@ -16,6 +17,21 @@ int isEmpty(Queue *q) {
     return q->front == -1 || q->front > q->rear;
 }
 
+// 🔍 Retrieve doctor availability
+int getDoctorAvailability(char *name, char *availability) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        struct Doctor* temp = hashTable[i];
+        while (temp != NULL) {
+            if (strcmp(temp->name, name) == 0) {
+                strcpy(availability, temp->availability);
+                return 1;
+            }
+            temp = temp->next;
+        }
+    }
+    return 0;
+}
+
 void bookAppointment(Queue *q) {
     if (isFull(q)) {
         printf("Appointment queue is full!\n");
@@ -25,20 +41,30 @@ void bookAppointment(Queue *q) {
     Appointment a;
     printf("Enter Appointment ID: ");
     scanf("%d", &a.id);
+    getchar();
+
     printf("Enter Patient Name: ");
-    scanf(" %[^\n]", a.patientName);
+    fgets(a.patientName, sizeof(a.patientName), stdin);
+    a.patientName[strcspn(a.patientName, "\n")] = '\0';
+
     printf("Enter Doctor Name: ");
-    scanf(" %[^\n]", a.doctorName);
+    fgets(a.doctorName, sizeof(a.doctorName), stdin);
+    a.doctorName[strcspn(a.doctorName, "\n")] = '\0';
+
+    if (!getDoctorAvailability(a.doctorName, a.time)) {
+        printf("Doctor not found or has no availability set.\n");
+        return;
+    }
+
     printf("Enter Date (dd-mm-yyyy): ");
     scanf("%s", a.date);
-    printf("Enter Time (hh:mm): ");
-    scanf("%s", a.time);
+    // a.time is already filled from doctor availability
 
     if (isEmpty(q)) {
         q->front = 0;
     }
     q->appointments[++q->rear] = a;
-    printf("Appointment booked successfully!\n");
+    printf("Appointment booked successfully! Time: %s\n", a.time);
 }
 
 void cancelAppointment(Queue *q) {
@@ -68,7 +94,6 @@ void listAppointments(Queue *q) {
     printf("-------------------------------------------------------------\n");
 }
 
-// 👇 This replaces the old main() for modular use
 void appointmentModule() {
     Queue q;
     initQueue(&q);
