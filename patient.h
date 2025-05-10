@@ -1,35 +1,27 @@
-// patient.h
 #ifndef PATIENT_H
 #define PATIENT_H
 
-#include "consoleui.h"  // For consistent UI functions
+#define MAX 100
 
-#define MAX_PATIENT_NAME 100
-#define MAX_CONTACT 15
-#define MAX_STATUS 25
-
-typedef struct PatientNode {
-    int id;
-    char name[MAX_PATIENT_NAME];
-    char bloodGroup[4];
+// Defining structure for a Node
+typedef struct node{
+    // Patient Info
+    int ID;
+    char name[MAX];
+    char blood_grp[4];
     char gender[10];
     int age;
-    char contact[MAX_CONTACT];
-    char status[MAX_STATUS];
-    struct PatientNode* next;
-} Patient;
+    char contact_no[11];
+    // Medical Info
+    char status[25];
+    // Node Link
+    struct node *next;
+} node;
 
-// Initialize patient list
-void initPatientList();
+// Function Prototypes
+node *create_ll_at_end(node *start);
+node *delete_node(node *start);
+node *update_node(node *start);
+node *search_node(node *start);
 
-// Core patient operations
-Patient* addPatient(Patient* start);
-Patient* deletePatient(Patient* start);
-Patient* updatePatient(Patient* start);
-void searchPatient(Patient* start);
-void listPatients(Patient* start);
-
-// Module interface
-void patientModule();
-
-#endif
+#endif // PATIENT_H
