@@ -4,6 +4,7 @@
 #include "appointments.h"
 #include "consoleui.h"
 #include "billing.h"
+#include "patient.h"
 
 int main() {
     int mainChoice;
@@ -24,7 +25,7 @@ int main() {
         clearScreen();
         switch (mainChoice) {
             case 1:
-                gotoxy(10, 5); printf("Patient Management Module not implemented yet.\n");
+                patientModule();
                 break;
             case 2:
                 doctorModule();
