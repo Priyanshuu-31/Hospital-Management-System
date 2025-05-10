@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "doctor.h"
 #include "medicalrecord.h"
+#include "appointments.h"
 
 void doctorModule() {
     int choice;
@@ -27,43 +28,44 @@ void doctorModule() {
 }
 
 int main() {
-    int mainChoice;
-    MedicalRecord* root = NULL;  // Medical record BST root
-
-    do {
-        printf("\n===== Hospital Management System =====\n");
-        printf("1. Patient Management Module\n");
-        printf("2. Doctor Management Module\n");
-        printf("3. Appointment Module\n");
-        printf("4. Billing & Payment Module\n");
-        printf("5. Medical Records & Report Module\n");
-        printf("0. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &mainChoice);
-
-        switch (mainChoice) {
-            case 1:
-                printf("Patient Management Module not implemented yet.\n");
-                break;
-            case 2:
-                doctorModule();
-                break;
-            case 3:
-                printf("Appointment Module not implemented yet.\n");
-                break;
-            case 4:
-                printf("Billing & Payment Module not implemented yet.\n");
-                break;
-            case 5:
-                root = medicalRecordModule(root);
-                break;
-            case 0:
-                printf("Exiting Hospital Management System.\n");
-                break;
-            default:
-                printf("Invalid choice. Try again.\n");
-        }
-    } while (mainChoice != 0);
-
-    return 0;
-}
+        int mainChoice;
+        MedicalRecord* root = NULL;
+    
+        do {
+            printf("\n===== Hospital Management System =====\n");
+            printf("1. Patient Management Module\n");
+            printf("2. Doctor Management Module\n");
+            printf("3. Appointment Module\n");
+            printf("4. Billing & Payment Module\n");
+            printf("5. Medical Records & Report Module\n");
+            printf("0. Exit\n");
+            printf("Enter your choice: ");
+            scanf("%d", &mainChoice);
+    
+            switch (mainChoice) {
+                case 1:
+                    printf("Patient Management Module not implemented yet.\n");
+                    break;
+                case 2:
+                    doctorModule();
+                    break;
+                case 3:
+                    appointmentModule();  // ✅ New appointment integration
+                    break;
+                case 4:
+                    printf("Billing & Payment Module not implemented yet.\n");
+                    break;
+                case 5:
+                    root = medicalRecordModule(root);
+                    break;
+                case 0:
+                    printf("Exiting Hospital Management System.\n");
+                    break;
+                default:
+                    printf("Invalid choice. Try again.\n");
+            }
+        } while (mainChoice != 0);
+    
+        return 0;
+    }
+    
