@@ -1,6 +1,7 @@
 // main.c
 #include <stdio.h>
 #include "doctor.h"
+#include "medicalrecord.h"
 
 void doctorModule() {
     int choice;
@@ -27,6 +28,8 @@ void doctorModule() {
 
 int main() {
     int mainChoice;
+    MedicalRecord* root = NULL;  // Medical record BST root
+
     do {
         printf("\n===== Hospital Management System =====\n");
         printf("1. Patient Management Module\n");
@@ -52,7 +55,7 @@ int main() {
                 printf("Billing & Payment Module not implemented yet.\n");
                 break;
             case 5:
-                printf("Medical Records & Report Module not implemented yet.\n");
+                root = medicalRecordModule(root);
                 break;
             case 0:
                 printf("Exiting Hospital Management System.\n");
